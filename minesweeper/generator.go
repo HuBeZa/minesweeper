@@ -8,9 +8,9 @@ var instance = &generator{}
 
 type Generator interface {
 	Custom(width, height, minesCount int) (Minefield, error)
-	Beginner() (Minefield, error)
-	Intermediate() (Minefield, error)
-	Expert() (Minefield, error)
+	Beginner() Minefield
+	Intermediate() Minefield
+	Expert() Minefield
 }
 
 type generator struct {
@@ -32,16 +32,19 @@ func (g *generator) Custom(width, height, minesCount int) (Minefield, error) {
 	return NewMinefield(width, height, mines), nil
 }
 
-func (g *generator) Beginner() (Minefield, error) {
-	return g.Custom(9, 9, 10)
+func (g *generator) Beginner() Minefield {
+	f, _ := g.Custom(9, 9, 10)
+	return f
 }
 
-func (g *generator) Intermediate() (Minefield, error) {
-	return g.Custom(16, 16, 40)
+func (g *generator) Intermediate() Minefield {
+	f, _ := g.Custom(16, 16, 40)
+	return f
 }
 
-func (g *generator) Expert() (Minefield, error) {
-	return g.Custom(30, 16, 99)
+func (g *generator) Expert() Minefield {
+	f, _ := g.Custom(30, 16, 99)
+	return f
 }
 
 func (g *generator) validate(width, height, minesCount int) error {

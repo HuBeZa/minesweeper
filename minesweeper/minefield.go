@@ -5,11 +5,14 @@ var drawHeader = true
 type Minefield interface {
 	Flag(row, col int) (Coordinates, error)
 	Unflag(row, col int) (Coordinates, error)
+	ToggleFlag(row, col int) (Coordinates, error)
 	Dig(row, col int) ([]Coordinates, error)
 	GameStatus() GameStatus
 	CellStatus(row, col int) CellStatus
 	AllCellStatus() [][]CellStatus
 	FlagsLeft() int
+	Width() int
+	Height() int
 }
 
 type minefield struct {
@@ -129,6 +132,20 @@ func (f *minefield) Unflag(row, col int) (Coordinates, error) {
 	coord := Coordinates{row, col}
 	delete(f.flags, coord)
 	return coord, nil
+}
+
+func (f *minefield) ToggleFlag(row, col int) (Coordinates, error) {
+	if f.status != GameOn {
+		return Coordinates{-1, -1}, &GameOverError{}
+	}
+	exists, cell := f.getCell(row, col)
+	if !exists {
+		return Coordinates{-1, -1}, &InvalidCoordinatesError{}
+	}
+	if !cell.isFlagged {
+		return f.Flag(row, col)
+	}
+	return f.Unflag(row, col)
 }
 
 func (f *minefield) Dig(row, col int) ([]Coordinates, error) {
@@ -275,6 +292,14 @@ func (f *minefield) CellStatus(row, col int) CellStatus {
 
 func (f *minefield) FlagsLeft() int {
 	return len(f.mines) - len(f.flags)
+}
+
+func (f *minefield) Width() int {
+	return f.width
+}
+
+func (f *minefield) Height() int {
+	return f.height
 }
 
 func (f *minefield) getCell(row, col int) (bool, *cell) {

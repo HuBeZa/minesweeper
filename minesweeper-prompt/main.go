@@ -49,16 +49,16 @@ func main() {
 
 func generateMinefield() (minesweeper.Minefield, error) {
 	if len(os.Args) < 2 {
-		return minesweeper.GameGenerator().Beginner()
+		return minesweeper.GameGenerator().Beginner(), nil
 	}
 
 	switch cmd := strings.ToLower(os.Args[1]); cmd {
 	case "beginner", "b":
-		return minesweeper.GameGenerator().Beginner()
+		return minesweeper.GameGenerator().Beginner(), nil
 	case "intermediate", "i":
-		return minesweeper.GameGenerator().Intermediate()
+		return minesweeper.GameGenerator().Intermediate(), nil
 	case "expert", "e":
-		return minesweeper.GameGenerator().Expert()
+		return minesweeper.GameGenerator().Expert(), nil
 	case "custom", "c":
 		if len(os.Args) < 5 {
 			return nil, fmt.Errorf("not enough arguments for 'custom' command")
@@ -80,13 +80,17 @@ func generateMinefield() (minesweeper.Minefield, error) {
 }
 
 func printHelp() {
-	fmt.Println("usage: minesweeper-prompt.exe [-h | --help]\n" +
+	cmd := "minesweeper-prompt.exe"
+	if len(os.Args) > 0 {
+		cmd = os.Args[0]
+	}
+	fmt.Printf("usage: %v [-h | --help]\n" +
 		"                              <command> [<args>]\n" +
 		"commands:\n" +
 		"\tbeginner | b\n" +
 		"\tintermediate | i\n" +
 		"\texpert | e\n" +
-		"\tcustom | c <width> <height> <mines-count>")
+		"\tcustom | c <width> <height> <mines-count>\n", cmd)
 }
 
 func runCommand(field minesweeper.Minefield, input string) error {
