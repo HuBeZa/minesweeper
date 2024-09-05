@@ -12,6 +12,10 @@ type Coordinates struct {
 	Row, Col int
 }
 
+func (c *Coordinates) Equals(row, col int) bool {
+	return c != nil && c.Row == row && c.Col == col
+}
+
 func indexToCoordinates(index, width int) Coordinates {
 	return Coordinates{
 		Row: index / width,
@@ -20,7 +24,7 @@ func indexToCoordinates(index, width int) Coordinates {
 }
 
 type MineList interface {
-	Randomize(minesCount int)
+	Randomize(mineCount int)
 	Add(row, col int) error
 	Len() int
 	IsMine(row, col int) bool
@@ -41,11 +45,11 @@ func NewMineList(width, height, capacity int) MineList {
 	}
 }
 
-func (l *mineList) Randomize(minesCount int) {
+func (l *mineList) Randomize(mineCount int) {
 	initialLen := l.Len()
 	maxIndex := l.width * l.height
 
-	for l.Len()-initialLen < minesCount {
+	for l.Len()-initialLen < mineCount {
 		index := rand.Intn(maxIndex)
 		l.mineSet[indexToCoordinates(index, l.width)] = struct{}{}
 	}

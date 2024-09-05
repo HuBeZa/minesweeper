@@ -156,6 +156,9 @@ func (f *minefield) Dig(row, col int) ([]Coordinates, error) {
 	if !exists {
 		return nil, &InvalidCoordinatesError{}
 	}
+	if cell.isFlagged {
+		return nil, &AlreadyFlaggedError{}
+	}
 	if !f.digOne(cell, row, col) {
 		return nil, &AlreadyDuggedError{}
 	}
@@ -165,7 +168,7 @@ func (f *minefield) Dig(row, col int) ([]Coordinates, error) {
 		f.status = Lost
 
 		// collect changed cells - the dugged cell + wrong flagged cells + unflagged mines
-		changes := []Coordinates{Coordinates{row,col}}
+		changes := []Coordinates{{row,col}}
 		changes = append(changes, f.getWronglyFlaggedCells()...)
 		changes = append(changes, f.getUnflaggedMines()...)
 		return changes, nil

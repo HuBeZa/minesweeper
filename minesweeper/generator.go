@@ -7,7 +7,7 @@ import (
 var instance = &generator{}
 
 type Generator interface {
-	Custom(width, height, minesCount int) (Minefield, error)
+	Custom(width, height, mineCount int) (Minefield, error)
 	Beginner() Minefield
 	Intermediate() Minefield
 	Expert() Minefield
@@ -20,13 +20,13 @@ func GameGenerator() Generator {
 	return instance
 }
 
-func (g *generator) Custom(width, height, minesCount int) (Minefield, error) {
-	if err := g.validate(width, height, minesCount); err != nil {
+func (g *generator) Custom(width, height, mineCount int) (Minefield, error) {
+	if err := g.validate(width, height, mineCount); err != nil {
 		return nil, err
 	}
 
-	mines := NewMineList(width, height, minesCount)
-	mines.Randomize(minesCount)
+	mines := NewMineList(width, height, mineCount)
+	mines.Randomize(mineCount)
 	
 
 	return NewMinefield(width, height, mines), nil
@@ -47,14 +47,14 @@ func (g *generator) Expert() Minefield {
 	return f
 }
 
-func (g *generator) validate(width, height, minesCount int) error {
+func (g *generator) validate(width, height, mineCount int) error {
 	if width < 2 || height < 2 {
 		return fmt.Errorf("minefield dimensions should be at least 2x2")
 	}
-	if minesCount <= 0 {
+	if mineCount < 1 {
 		return fmt.Errorf("a minefield should have at least one mine")
 	}
-	if minesCount > width*height {
+	if mineCount > width*height {
 		return fmt.Errorf("the number of mines cannot exceed the size of the minefield")
 	}
 	return nil
